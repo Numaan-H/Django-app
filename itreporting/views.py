@@ -7,5 +7,5 @@ def home(request):
     return render(request, 'itreporting/home.html', {'title': 'Welcome'})
 
 def contact(request):
-    return HttpResponse('<h1>Contact Us</h1>')
+    return render(request, 'itreporting/contact.html', {'title': 'contact'})
 
