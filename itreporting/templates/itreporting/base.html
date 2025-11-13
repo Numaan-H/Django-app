@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <!-- Required meta tags -->
+    <!-- Required meta tags. -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
@@ -40,10 +40,11 @@
 
             <div class="collapse navbar-collapse" id="navbarToggle">
               <div class="navbar-nav mr-auto">
-                <a class="nav-item nav-link" href="#">Home</a>
+                <a class="nav-item nav-link" href="{% url 'itreporting:home' %}">Home</a>
                 <a class="nav-item nav-link" href="#">About</a>
                 <a class="nav-item nav-link" href="#">Report</a>
-                <a class="nav-item nav-link" href="#">Contact</a>
+                <a class="nav-item nav-link" href="{% url 'itreporting:contact' %}">Contact</a>
+                <a class="nav-item nav-link" href="{% url 'itreporting:report' %}">View Reported Issues</a>
               </div>
 
               <!-- Navbar Right Side -->
@@ -54,6 +55,7 @@
                     <form method="POST" id="frm_logout" action="{% url 'logout' %}">
                         {% csrf_token %}
                         <a class="nav-item nav-link" href="#" onclick="document.getElementById('frm_logout').submit(); return false;">Logout</a> 
+                        
                     </form>       
                                
                 {% else %} 
@@ -61,7 +63,8 @@
                     <a class="nav-item nav-link" href="{% url 'login' %}">Login</a> 
             
                     <a class="nav-item nav-link" href="{% url 'register' %}">Register</a> 
-            
+                    
+
                 {% endif %} 
                                 
             </div>
