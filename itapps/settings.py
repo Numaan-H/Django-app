@@ -16,23 +16,16 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+SECRET_KEY = os.environ.get('SECRET_KEY', 'your_current_secret_key_value')
 WEBSITE_HOSTNAME = os.environ.get('WEBSITE_HOSTNAME', None)
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-WEBSITE_HOSTNAME = os.environ.get('WEBSITE_HOSTNAME')
-
-DEBUG = WEBSITE_HOSTNAME is None  # True for local dev, False on Azure
+DEBUG = WEBSITE_HOSTNAME == None
 
 if DEBUG:
-    ALLOWED_HOSTS = []
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
     CSRF_TRUSTED_ORIGINS = []
 else:
     ALLOWED_HOSTS = [WEBSITE_HOSTNAME]
     CSRF_TRUSTED_ORIGINS = [f'https://{WEBSITE_HOSTNAME}']
-
 
 # Application definition
 
