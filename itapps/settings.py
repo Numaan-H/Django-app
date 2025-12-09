@@ -22,20 +22,17 @@ WEBSITE_HOSTNAME = os.environ.get('WEBSITE_HOSTNAME', None)
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', 'your_current_secret_key_value')
-DEBUG = WEBSITE_HOSTNAME == None
+WEBSITE_HOSTNAME = os.environ.get('WEBSITE_HOSTNAME')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
-
+DEBUG = WEBSITE_HOSTNAME is None  # True for local dev, False on Azure
 
 if DEBUG:
     ALLOWED_HOSTS = []
+    CSRF_TRUSTED_ORIGINS = []
 else:
     ALLOWED_HOSTS = [WEBSITE_HOSTNAME]
     CSRF_TRUSTED_ORIGINS = [f'https://{WEBSITE_HOSTNAME}']
+
 
 # Application definition
 
