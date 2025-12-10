@@ -78,18 +78,21 @@ WSGI_APPLICATION = 'itapps.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ['AZURE_DB_NAME'],
-        'HOST': os.environ['AZURE_DB_HOST'],
-        'PORT': os.environ['AZURE_DB_PORT'],
-        'USER': os.environ['AZURE_DB_USER'],
-        'PASSWORD': os.environ['AZURE_DB_PASSWORD'],
-        'OPTIONS': {
-            'ssl': {
-                'ssl_ca': '/etc/ssl/certs/ca-certificates.crt'
-            }
-        }
+        'NAME': os.getenv('AZURE_DB_NAME'),
+        'USER': os.getenv('AZURE_DB_USER'),
+        'PASSWORD': os.getenv('AZURE_DB_PASSWORD'),
+        'HOST': os.getenv('AZURE_DB_HOST'),
+        'PORT': os.getenv('AZURE_DB_PORT', '3306'),  # fallback for local dev
     }
 }
+
+# ✔ Enable SSL only when running on Azure App Service
+if os.getenv('WEBSITE_SITE_NAME'):
+    DATABASES['default']['OPTIONS'] = {
+        'ssl': {
+            'ca': '/etc/ssl/certs/ca-certificates.crt'
+        }
+    }
 
 
 # Password validation
@@ -166,3 +169,25 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 LOGIN_REDIRECT_URL = 'itreporting:home'
 LOGIN_URL = 'login' 
 #LOGIN_URL = 'itreporting:home'
+
+print("\n=========== SELECTED ENVIRONMENT VARIABLES ===========")
+
+print(f"DEBUG: {DEBUG}")
+print(f"WEBSITE_HOSTNAME: {WEBSITE_HOSTNAME}")
+
+# Database Variables
+print("\n--- DATABASE CONFIG ---")
+print(f"AZURE_DB_NAME: {os.environ.get('AZURE_DB_NAME')}")
+print(f"AZURE_DB_HOST: {os.environ.get('AZURE_DB_HOST')}")
+print(f"AZURE_DB_PORT: {os.environ.get('AZURE_DB_PORT')}")
+print(f"AZURE_DB_USER: {os.environ.get('AZURE_DB_USER')}")
+# Avoid printing password in production!
+print(f"AZURE_DB_PASSWORD: {os.environ.get('AZURE_DB_PASSWORD')}")
+
+# Azure Storage Variables
+print("\n--- AZURE STORAGE CONFIG ---")
+print(f"AZURE_SA_NAME: {AZURE_SA_NAME}")
+# Avoid printing keys in production!
+print(f"AZURE_SA_KEY: {AZURE_SA_KEY}")
+
+print("======================================================\n")
