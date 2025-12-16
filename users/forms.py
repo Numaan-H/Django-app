@@ -22,3 +22,13 @@ class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['image']
+
+class EmailSignupForm(forms.Form):
+    email = forms.EmailField(
+        label="Email address",
+        max_length=254,
+        widget=forms.EmailInput(attrs={
+            "placeholder": "Enter your email",
+            "class": "form-control"
+        })
+    )

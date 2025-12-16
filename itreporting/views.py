@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 # Create your views here.
 from django.http import HttpResponse
@@ -9,6 +9,29 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.urls import reverse_lazy
 from .models import Issue
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.mail import send_mail
+from django.conf import settings
+from .forms import EmailSignupForm
+
+def email_signup(request):
+    if request.method == "POST":
+        form = EmailSignupForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data["email"]
+
+            send_mail(
+                subject="New Email Signup",
+                message=f"New subscriber: {email}",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[settings.ADMIN_EMAIL],
+            )
+
+            return redirect("signup_success")
+    else:
+        form = EmailSignupForm()
+
+    return render(request, "newsletter/signup.html", {"form": form})
+
 
 class PostListView(ListView):
     model = Issue
