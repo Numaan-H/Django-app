@@ -16,18 +16,16 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+SECRET_KEY = os.environ.get('SECRET_KEY', 'your_current_secret_key_value')
+WEBSITE_HOSTNAME = os.environ.get('WEBSITE_HOSTNAME', None)
+DEBUG = WEBSITE_HOSTNAME == None
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-7d=m#ab8$xnp#okplu=v(pv6)yxoap_7&8#rmff=5u0*u$(sy1'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
-
+if DEBUG:
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+    CSRF_TRUSTED_ORIGINS = []
+else:
+    ALLOWED_HOSTS = [WEBSITE_HOSTNAME]
+    CSRF_TRUSTED_ORIGINS = [f'https://{WEBSITE_HOSTNAME}']
 
 # Application definition
 
@@ -77,25 +75,24 @@ WSGI_APPLICATION = 'itapps.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = { 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('AZURE_DB_NAME'),
+        'USER': os.getenv('AZURE_DB_USER'),
+        'PASSWORD': os.getenv('AZURE_DB_PASSWORD'),
+        'HOST': os.getenv('AZURE_DB_HOST'),
+        'PORT': os.getenv('AZURE_DB_PORT', '3306'),  # fallback for local dev
+    }
+}
 
-    'default': { 
-
-        'ENGINE': 'django.db.backends.mysql', 
-
-        'NAME': os.environ['AZURE_DB_NAME'], 
-
-        'HOST': os.environ['AZURE_DB_HOST'], 
-
-        'PORT': os.environ['AZURE_DB_PORT'], 
-
-        'USER': os.environ['AZURE_DB_USER'], 
-
-        'PASSWORD': os.environ['AZURE_DB_PASSWORD'], 
-
-    } 
-
-} 
+# ✔ Enable SSL only when running on Azure App Service
+if os.getenv('WEBSITE_SITE_NAME'):
+    DATABASES['default']['OPTIONS'] = {
+        'ssl': {
+            'ca': '/etc/ssl/certs/ca-certificates.crt'
+        }
+    }
 
 
 # Password validation
@@ -171,4 +168,26 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap4'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 LOGIN_REDIRECT_URL = 'itreporting:home'
 LOGIN_URL = 'login' 
-LOGIN_URL = 'itreporting:home'
+#LOGIN_URL = 'itreporting:home'
+
+print("\n=========== SELECTED ENVIRONMENT VARIABLES ===========")
+
+print(f"DEBUG: {DEBUG}")
+print(f"WEBSITE_HOSTNAME: {WEBSITE_HOSTNAME}")
+
+# Database Variables
+print("\n--- DATABASE CONFIG ---")
+print(f"AZURE_DB_NAME: {os.environ.get('AZURE_DB_NAME')}")
+print(f"AZURE_DB_HOST: {os.environ.get('AZURE_DB_HOST')}")
+print(f"AZURE_DB_PORT: {os.environ.get('AZURE_DB_PORT')}")
+print(f"AZURE_DB_USER: {os.environ.get('AZURE_DB_USER')}")
+# Avoid printing password in production!
+print(f"AZURE_DB_PASSWORD: {os.environ.get('AZURE_DB_PASSWORD')}")
+
+# Azure Storage Variables
+print("\n--- AZURE STORAGE CONFIG ---")
+print(f"AZURE_SA_NAME: {AZURE_SA_NAME}")
+# Avoid printing keys in production!
+print(f"AZURE_SA_KEY: {AZURE_SA_KEY}")
+
+print("======================================================\n")
