@@ -94,7 +94,32 @@
               sentences so people could check the formatting. 
             </p>
             <ul class="list-group">
-              <li class="list-group-item list-group-item-light">Weather will go here</li>
+              <form method="POST" action="{% url 'itreporting:set_weather_city' %}" class="mb-2">
+                {% csrf_token %}
+                <div class="input-group input-group-sm">
+                  <input
+                    type="text"
+                    name="city"
+                    class="form-control"
+                    placeholder="Enter city"
+                    required
+                  />
+                  <button class="btn btn-outline-secondary" type="submit">
+                    Set
+                  </button>
+                </div>
+              </form>
+              
+              <li class="list-group-item list-group-item-light">{% if weather %}
+                <strong>{{ weather.city }}</strong>
+                <ul class="mt-2">
+                  <li>Description: {{ weather.description }}</li>
+                  <li>Temperature: {{ weather.temp }} °C</li>
+                  <li>Feels Like: {{ weather.feels_like }} °C</li>
+                  <li>Humidity: {{ weather.humidity }}%</li>
+                </ul>
+              {% endif %}
+              </li>
               <li class="list-group-item list-group-item-light">IT Policies</li>
             </ul>
           </div>
