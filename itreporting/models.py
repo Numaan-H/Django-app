@@ -25,3 +25,41 @@ class Issue(models.Model):
 
     def get_absolute_url(self):
         return reverse('itreporting:issue-detail', kwargs={'pk': self.pk})
+
+class Student(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.username
+
+
+class Course(models.Model):
+    name = models.CharField(max_length=100)
+    code = models.CharField(max_length=10, unique=True)
+
+    def __str__(self):
+        return f"{self.code} - {self.name}"
+
+
+class Module(models.Model):
+    CATEGORY_CHOICES = [
+        ("CORE", "Core"),
+        ("OPTIONAL", "Optional"),
+    ]
+
+    name = models.CharField(max_length=100)
+    code = models.CharField(max_length=10, unique=True)
+    credit = models.PositiveIntegerField()
+    category = models.CharField(max_length=10, choices=CATEGORY_CHOICES)
+    description = models.TextField()
+    is_open = models.BooleanField(default=True)
+
+    courses = models.ManyToManyField(Course, related_name="modules")
+    students = models.ManyToManyField(
+        Student,
+        blank=True,
+        related_name="registered_modules"
+    )
+
+    def __str__(self):
+        return f"{self.code} - {self.name}"

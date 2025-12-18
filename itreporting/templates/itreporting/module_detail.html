@@ -1,0 +1,20 @@
+<h1>{{ module.name }}</h1>
+<p>{{ module.description }}</p>
+
+<p>Credits: {{ module.credit }}</p>
+<p>Status: {{ module.is_open|yesno:"Open,Closed" }}</p>
+
+{% if module.is_open %}
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">
+        {% if is_registered %}
+            Unregister
+        {% else %}
+            Register
+        {% endif %}
+    </button>
+</form>
+{% else %}
+<p>Registration is closed.</p>
+{% endif %}

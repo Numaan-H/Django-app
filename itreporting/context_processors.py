@@ -1,7 +1,6 @@
 import requests
 
 def weather_context(request):
-    # Get city from session, default to York
     city_name = request.session.get("weather_city", "York")
     api_key = "2474636061ab426f55d6f07da1b3d43f"
 

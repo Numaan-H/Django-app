@@ -1,13 +1,16 @@
 import requests
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from .models import Issue
+from .models import Issue, Course, Module, Student
+from users.forms import StudentRegistrationForm
+from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.mail import send_mail
 from django.conf import settings
+from django.contrib.auth.decorators import login_required  
 
 @require_POST
 def set_weather_city(request):
@@ -17,6 +20,48 @@ def set_weather_city(request):
         request.session["weather_city"] = city.strip()
 
     return redirect(request.META.get("HTTP_REFERER", "/"))
+
+@login_required
+def module_detail(request, code):
+    module = get_object_or_404(Module, code=code)
+    student = request.user.student
+
+    if request.method == "POST" and module.is_open:
+        if student in module.students.all():
+            module.students.remove(student)
+        else:
+            module.students.add(student)
+
+    return render(request, "courses/module_detail.html", {
+        "module": module,
+        "is_registered": student in module.students.all()
+    })
+
+@login_required
+def module_list(request):
+    modules = Module.objects.filter(is_open=True)
+    return render(request, "itreporting/module_list.html", {
+        "modules": modules
+    })
+
+@login_required
+def module_detail(request, code):
+    module = get_object_or_404(Module, code=code)
+    student = request.user.student
+
+    is_registered = student in module.students.all()
+
+    if request.method == "POST" and module.is_open:
+        if is_registered:
+            module.students.remove(student)
+        else:
+            module.students.add(student)
+        return redirect("module_detail", code=code)
+
+    return render(request, "itreporting/module_detail.html", {
+        "module": module,
+        "is_registered": is_registered
+    })
 
 class PostListView(ListView):
     model = Issue
@@ -94,3 +139,20 @@ def weather_view(request):
         }
 
     return render(request, "base.html", {"weather": weather})
+
+def register(request):
+    if request.method == "POST":
+        form = StudentRegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data["password"])
+            user.save()
+
+            # Create linked Student profile
+            Student.objects.create(user=user)
+
+            login(request, user)
+            return redirect("module_list")
+    else:
+        form = StudentRegistrationForm()
+        return render(request, "itreporting/register.html", {"form": form})

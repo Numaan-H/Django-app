@@ -3,6 +3,7 @@ from .forms import UserRegisterForm,UserUpdateForm, ProfileUpdateForm, EmailSign
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required  
 
+
 def profile(request):
     if request.method == 'POST':
         u_form = UserUpdateForm(request.POST, instance=request.user)
@@ -20,9 +21,6 @@ def profile(request):
     context = {'u_form': u_form, 'p_form': p_form, 'title': 'Student Profile'} 
     return render(request, 'users/profile.html', context) 
  
-
-
-
 def register(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)

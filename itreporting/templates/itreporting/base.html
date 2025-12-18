@@ -51,6 +51,7 @@
 
                 {% if user.is_authenticated  %} 
                 <a class="nav-item nav-link" href="{% url 'itreporting:issue-create' %}">Report New Issue</a>
+                <a class="nav-item nav-link" href="{% url 'itreporting:module_list' %}">Modules</a>
                     <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
                     <form method="POST" id="frm_logout" action="{% url 'logout' %}">
                         {% csrf_token %}
@@ -120,7 +121,9 @@
                 </ul>
               {% endif %}
               </li>
-              <li class="list-group-item list-group-item-light">IT Policies</li>
+              <p></p>
+              {% if user.is_staff %}
+            {% endif %}<a class="nav-item nav-link" href="{% url 'admin:index' %}">Admin login</a> 
             </ul>
           </div>
         </div>
