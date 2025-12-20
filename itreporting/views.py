@@ -156,3 +156,23 @@ def register(request):
     else:
         form = StudentRegistrationForm()
         return render(request, "itreporting/register.html", {"form": form})
+
+def email_signup(request):
+    if request.method == "POST":
+        form = EmailSignupForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data["email"]
+
+            send_mail(
+                subject="New Email Signup",
+                message=f"New subscriber: {email}",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[settings.ADMIN_EMAIL],
+            )
+
+            return redirect("signup_success")
+    else:
+        form = EmailSignupForm()
+
+    return render(request, "newsletter/signup.html", {"form": form})
+

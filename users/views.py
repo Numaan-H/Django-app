@@ -1,9 +1,34 @@
 from django.shortcuts import render, redirect
-from .forms import UserRegisterForm,UserUpdateForm, ProfileUpdateForm, EmailSignupForm
+from django.core.mail import send_mail
+from django.conf import settings
+from .forms import UserRegisterForm,UserUpdateForm, ProfileUpdateForm, EmailSignupForm, ContactForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required  
 
+def contact_view(request):
+    if request.method == "POST":
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            send_mail(
+                subject=form.cleaned_data["subject"],
+                message=form.cleaned_data["message"],
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[form.cleaned_data["email"]],
+                fail_silently=False,
+            )
 
+            return render(
+                request,
+                "itreporting/contact.html",
+                {
+                    "form": ContactForm(),
+                    "success": True
+                }
+            )
+    else:
+        form = ContactForm()
+
+    return render(request, "itreporting/contact.html", {"form": form})
 def profile(request):
     if request.method == 'POST':
         u_form = UserUpdateForm(request.POST, instance=request.user)

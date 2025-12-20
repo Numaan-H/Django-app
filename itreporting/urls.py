@@ -1,13 +1,14 @@
 from django.urls import path, include
 from . import views
-from .views import PostListView, PostDetailView, PostCreateView, PostUpdateView, PostDeleteView, weather_view, set_weather_city
+from .views import PostListView, PostDetailView, PostCreateView, PostUpdateView, PostDeleteView, weather_view, set_weather_city, email_signup
+from users.views import contact_view
 
 
 app_name = 'itreporting'
 
 urlpatterns = [
     path('', views.home, name = 'home'),
-    path('contact', views.contact, name='contact'),
+    path('contact/', contact_view, name='contact'),
     path('report/', PostListView.as_view(), name = 'report'),
     path('issues/<int:pk>', PostDetailView.as_view(), name = 'issue-detail'),
     path('issue/new', PostCreateView.as_view(), name = 'issue-create'),

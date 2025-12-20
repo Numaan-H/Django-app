@@ -1,5 +1,19 @@
 {% extends "itreporting/base.html" %}
 
-    {% block content %}
-    <h1>Welcome to the  SHU homepage</h1>
+{% block title %}Homepage{% endblock %}
+
+{% block content %}
+<h1>Log in to view available modules</h1>
+<p></p>
+<h2><a href="{% url 'itreporting:module_list' %}">Modules</a></h2>
+
+<ul>
+    {% for module in modules %}
+        <li>
+            <a href="{% url 'itreporting:module_detail' module.code %}">
+                {{ module.code }} – {{ module.name }}
+            </a>            
+        </li>
+    {% endfor %}
+</ul>
 {% endblock %}

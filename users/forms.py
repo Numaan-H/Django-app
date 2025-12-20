@@ -46,3 +46,13 @@ class StudentRegistrationForm(forms.ModelForm):
         if cleaned_data.get("password") != cleaned_data.get("password_confirm"):
             raise forms.ValidationError("Passwords do not match")
         return cleaned_data
+    
+
+class ContactForm(forms.Form):
+    name = forms.CharField(max_length=100)
+    email = forms.EmailField(
+        label="Email address",
+        help_text="Email address you want this sending to"
+    )
+    subject = forms.CharField(max_length=150)
+    message = forms.CharField(widget=forms.Textarea)

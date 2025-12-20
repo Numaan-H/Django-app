@@ -176,10 +176,9 @@ EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "rnahussain@gmail.com"
-EMAIL_HOST_PASSWORD = "your_app_password"
-
+EMAIL_HOST_PASSWORD = "ceke upbf xomw chpv"
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-ADMIN_EMAIL = "rnahussain@gmail.com"
+
 
 
 
