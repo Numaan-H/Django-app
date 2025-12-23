@@ -3,23 +3,31 @@
 {% block content %}
 
 <div class="content-section"> 
-
   <div class="media"> 
 
-   <p><img class="rounded-circle account-img" src="{{user.profile.image.url}}"></p> 
+    <p>
+      <img class="rounded-circle account-img" src="{{ user.profile.image.url }}">
+    </p> 
 
     <div class="media-body"> 
+      <h2 class="account-heading">{{ user.username }}</h2> 
 
-      <h2 class="account-heading">{{user.profile}}</h2> 
+      <p class="text-secondary">{{ user.email }}</p> 
 
-      <p class="text-secondary">{{user.username}}</p> 
+      <p class="text-secondary">
+        Date of birth: {{ user.profile.date_of_birth }}
+      </p> 
 
-      <p class="text-secondary">{{user.email}}</p> 
+      <p class="text-secondary">
+        City: {{ user.profile.city }}
+      </p> 
 
+      <p class="text-secondary">
+        Country: {{ user.profile.country }}
+      </p> 
     </div> 
-
   </div> 
-
 </div> 
 
+<a class="btn btn-outline-info btn-sm" href="{% url 'profile_edit' %}">Edit Profile</a>
 {% endblock content %}

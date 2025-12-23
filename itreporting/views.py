@@ -5,7 +5,7 @@ from django.views.decorators.http import require_POST
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from .models import Issue, Course, Module, Student
-from users.forms import StudentRegistrationForm
+from users.forms import StudentRegistrationForm, UserUpdateForm, ProfileUpdateForm, EmailSignupForm
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.mail import send_mail
@@ -62,6 +62,8 @@ def module_detail(request, code):
         "module": module,
         "is_registered": is_registered
     })
+
+
 
 class PostListView(ListView):
     model = Issue

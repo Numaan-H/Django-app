@@ -1,5 +1,8 @@
-<h1>{{ module.name }}</h1>
-<p>{{ module.description }}</p>
+{% extends "itreporting/base.html" %}
+
+{% block title %}Modules{% endblock %}
+
+{% block content %}<h1>{{ module.name }}</h1>
 
 <p>Credits: {{ module.credit }}</p>
 <p>Status: {{ module.is_open|yesno:"Open,Closed" }}</p>
@@ -18,3 +21,5 @@
 {% else %}
 <p>Registration is closed.</p>
 {% endif %}
+
+{% endblock %}
