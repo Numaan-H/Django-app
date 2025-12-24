@@ -3,6 +3,8 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.urls import reverse
 
+from users.models import Profile
+
 # Create your models here.
 class Issue(models.Model):
     type = models.CharField(
@@ -27,11 +29,14 @@ class Issue(models.Model):
         return reverse('itreporting:issue-detail', kwargs={'pk': self.pk})
 
 class Student(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    profile = models.OneToOneField(
+        Profile,
+        on_delete=models.CASCADE,
+        related_name="student"
+    )
 
     def __str__(self):
-        return self.user.username
-
+        return self.profile.user.username
 
 class Course(models.Model):
     name = models.CharField(max_length=100)
@@ -39,27 +44,24 @@ class Course(models.Model):
 
     def __str__(self):
         return f"{self.code} - {self.name}"
-
-
+    
 class Module(models.Model):
     CATEGORY_CHOICES = [
         ("CORE", "Core"),
         ("OPTIONAL", "Optional"),
-    ]
-
-    name = models.CharField(max_length=100)
-    code = models.CharField(max_length=10, unique=True)
-    credit = models.PositiveIntegerField()
+    ]    
+    name = models.CharField(max_length=200)
+    code = models.CharField(max_length=20, unique=True)
+    credit = models.IntegerField()
     category = models.CharField(max_length=10, choices=CATEGORY_CHOICES)
     description = models.TextField()
     is_open = models.BooleanField(default=True)
-
     courses = models.ManyToManyField(Course, related_name="modules")
     students = models.ManyToManyField(
         Student,
-        blank=True,
-        related_name="registered_modules"
+        related_name="modules",
+        blank=True
     )
 
     def __str__(self):
-        return f"{self.code} - {self.name}"
+        return f"{self.code} – {self.name}"

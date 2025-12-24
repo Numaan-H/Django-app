@@ -3,15 +3,27 @@
 {% block title %}Modules{% endblock %}
 
 {% block content %}
-<h1>Log in to view available modules</h1>
+<div class="container py-4">
+    <h1 class="mb-4">Available Modules</h1>
 
-<ul>
-    {% for module in modules %}
-        <li>
-            <a href="{% url 'itreporting:module_detail' module.code %}">
-                {{ module.code }} – {{ module.name }}
-            </a>            
-        </li>
-    {% endfor %}
-</ul>
+    {% if modules %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for module in modules %}
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ module.code }} – {{ module.name }}</h5>
+                    <p class="card-text">{{ module.description|truncatechars:150 }}</p>
+                    <p class="mb-1"><strong>Credits:</strong> {{ module.credit }}</p>
+                    <p class="mb-2"><strong>Status:</strong> {{ module.is_open|yesno:"Open,Closed" }}</p>
+                    <a href="{% url 'itreporting:module_detail' module.code %}" class="btn btn-primary mt-auto">View Details</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+        <p>No modules are currently available.</p>
+    {% endif %}
+</div>
 {% endblock %}

@@ -7,6 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('itreporting', '0001_initial'),
+        ('users', '0001_initial'),
     ]
 
     operations = [

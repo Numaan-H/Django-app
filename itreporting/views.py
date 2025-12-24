@@ -47,23 +47,47 @@ def module_list(request):
 @login_required
 def module_detail(request, code):
     module = get_object_or_404(Module, code=code)
-    student = request.user.student
 
-    is_registered = student in module.students.all()
+    # student always exists now
+    student = request.user.profile.student
+
+    is_registered = module.students.filter(pk=student.pk).exists()
 
     if request.method == "POST" and module.is_open:
         if is_registered:
             module.students.remove(student)
         else:
             module.students.add(student)
-        return redirect("module_detail", code=code)
+
+        return redirect("itreporting:module_detail", code=code)
 
     return render(request, "itreporting/module_detail.html", {
         "module": module,
-        "is_registered": is_registered
+        "is_registered": is_registered,
     })
 
+def my_modules(request):
+    student = request.user.student
 
+    modules = Module.objects.all()
+
+    if request.method == "POST":
+        module_id = request.POST.get("module_id")
+        action = request.POST.get("action")  
+        module = get_object_or_404(Module, id=module_id)
+
+        if module.is_open:
+            if action == "register":
+                module.students.add(student)
+            elif action == "unregister":
+                module.students.remove(student)
+
+        return redirect("itreporting:my_modules")
+
+    return render(request, "itreporting/my_modules.html", {
+        "modules": modules,
+        "student": student,
+    })
 
 class PostListView(ListView):
     model = Issue

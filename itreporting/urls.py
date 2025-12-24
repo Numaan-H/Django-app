@@ -16,7 +16,5 @@ urlpatterns = [
     path('issues/<int:pk>/delete/', PostDeleteView.as_view(), name = 'issue-delete'),
     path("set-city/", set_weather_city, name="set_weather_city"),
     path("modules/", views.module_list, name="module_list"),
-    path("modules/<str:code>/", views.module_detail, name="module_detail"), 
-
-
+    path("modules/<str:code>/", views.module_detail, name="module_detail"),
 ]

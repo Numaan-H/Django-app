@@ -5,12 +5,13 @@
 {% block content %}<h1>{{ module.name }}</h1>
 
 <p>Credits: {{ module.credit }}</p>
+<p>Decription: {{ module.description }}</p>
 <p>Status: {{ module.is_open|yesno:"Open,Closed" }}</p>
 
 {% if module.is_open %}
-<form method="post">
+<form method="post" action="">
     {% csrf_token %}
-    <button type="submit">
+    <button type="Submit" class="btn btn-outline-info btn-sm">
         {% if is_registered %}
             Unregister
         {% else %}
@@ -18,8 +19,10 @@
         {% endif %}
     </button>
 </form>
+
 {% else %}
 <p>Registration is closed.</p>
 {% endif %}
-
+<p></p>
+<a class="btn btn-outline-info btn-sm" href="{% url 'itreporting:module_list' %}">Back</a>
 {% endblock %}

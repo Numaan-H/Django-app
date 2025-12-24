@@ -3,7 +3,7 @@ from django.db import models
 
 class Profile(models.Model):
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     image = models.ImageField(default='profile_pics/default.png', upload_to='profile_pics')
     date_of_birth = models.DateField(null=True, blank=True)
     address = models.CharField(max_length=255, blank=True)
