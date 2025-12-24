@@ -52,13 +52,11 @@ def register(request):
         form = UserRegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
-            profile = user.profile
-            profile.date_of_birth = form.cleaned_data['date_of_birth']
-            profile.address = form.cleaned_data['address']
-            profile.city = form.cleaned_data['city']
-            profile.country = form.cleaned_data['country']
-            profile.save()
 
+            # ✅ SAFE profile creation
+            Profile.objects.get_or_create(user=user)
+
+            messages.success(request, 'Your account has been created!')
             return redirect('login')
     else:
         form = UserRegisterForm()
