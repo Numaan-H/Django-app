@@ -1,10 +1,14 @@
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail
 from django.conf import settings
+from itreporting.models import Student
 from users.models import Profile
-from .forms import UserRegisterForm,UserUpdateForm, ProfileUpdateForm, EmailSignupForm, ContactForm
+from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, EmailSignupForm, ContactForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required  
+from django.contrib.auth.forms import UserCreationForm
+from django.db import transaction
+
 
 def contact_view(request):
     if request.method == "POST":
@@ -30,33 +34,62 @@ def contact_view(request):
         form = ContactForm()
 
     return render(request, "itreporting/contact.html", {"form": form})
+
 def profile(request):
     if request.method == 'POST':
         u_form = UserUpdateForm(request.POST, instance=request.user)
         p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
 
-    if u_form.is_valid() and p_form.is_valid():
-        u_form.save()
-        p_form.save()
-        messages.success(request, 'Your account has been successfully updated!')
-        return redirect('profile')
-    else:     
-        u_form = UserUpdateForm(instance = request.user) 
-        p_form = ProfileUpdateForm(instance = request.user.profile) 
+        if u_form.is_valid() and p_form.is_valid():
+            u_form.save()
+            p_form.save()
+            messages.success(request, 'Your account has been successfully updated!')
+            return redirect('profile')
+    else:
+        u_form = UserUpdateForm(instance=request.user)
+        p_form = ProfileUpdateForm(instance=request.user.profile)
 
-    context = {'u_form': u_form, 'p_form': p_form, 'title': 'Student Profile'} 
-    return render(request, 'users/profile.html', context) 
- 
+    context = {
+        'u_form': u_form,
+        'p_form': p_form,
+        'title': 'Student Profile'
+    }
+    return render(request, 'users/profile.html', context)
+
 def register(request):
+    if request.method == 'POST':
+        form = UserRegisterForm(request.POST)
+        if form.is_valid():
+            with transaction.atomic():
+                user = form.save()
+
+                # DO NOT create Profile here
+                # Profile is created automatically by signals.py
+
+                # Create Student only
+                Student.objects.get_or_create(user=user)
+
+            return redirect('login')
+    else:
+        form = UserRegisterForm()
+
+    return render(request, 'users/register.html', {'form': form})
+
+'''def register(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
 
-            # ✅ SAFE profile creation
-            Profile.objects.get_or_create(user=user)
+            # Create student ONCE
+            student = Student.objects.create(user=user)
 
-            messages.success(request, 'Your account has been created!')
+            # Create profile ONCE and link student
+            Profile.objects.create(
+                user=user,
+                student=student
+            )
+
             return redirect('login')
     else:
         form = UserRegisterForm()
@@ -66,7 +99,7 @@ def register(request):
 @login_required 
 def profile(request):
 
-    return render(request, 'users/profile.html', {'title': 'Student Profile'})
+    return render(request, 'users/profile.html', {'title': 'Student Profile'})'''
 
 @login_required
 def profile_edit(request):

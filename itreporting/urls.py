@@ -2,7 +2,7 @@ from django.urls import path, include
 from . import views
 from .views import PostListView, PostDetailView, PostCreateView, PostUpdateView, PostDeleteView, weather_view, set_weather_city, email_signup, module_detail,  module_list
 from users.views import contact_view, profile, profile_edit
-
+from itreporting import views as itreporting_views
 
 app_name = 'itreporting'
 
@@ -17,4 +17,5 @@ urlpatterns = [
     path("set-city/", set_weather_city, name="set_weather_city"),
     path("modules/", views.module_list, name="module_list"),
     path("modules/<str:code>/", views.module_detail, name="module_detail"),
+    path('about/', itreporting_views.about, name='about'),
 ]

@@ -4,6 +4,8 @@ from django.http import HttpResponse
 from django.views.decorators.http import require_POST
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
+
+from users.models import Profile
 from .models import Issue, Course, Module, Student
 from users.forms import StudentRegistrationForm, UserUpdateForm, ProfileUpdateForm, EmailSignupForm
 from django.contrib.auth import login
@@ -22,22 +24,6 @@ def set_weather_city(request):
     return redirect(request.META.get("HTTP_REFERER", "/"))
 
 @login_required
-def module_detail(request, code):
-    module = get_object_or_404(Module, code=code)
-    student = request.user.student
-
-    if request.method == "POST" and module.is_open:
-        if student in module.students.all():
-            module.students.remove(student)
-        else:
-            module.students.add(student)
-
-    return render(request, "courses/module_detail.html", {
-        "module": module,
-        "is_registered": student in module.students.all()
-    })
-
-@login_required
 def module_list(request):
     modules = Module.objects.filter(is_open=True)
     return render(request, "itreporting/module_list.html", {
@@ -47,11 +33,10 @@ def module_list(request):
 @login_required
 def module_detail(request, code):
     module = get_object_or_404(Module, code=code)
+    student = request.user.student
 
-    # student always exists now
-    student = request.user.profile.student
 
-    is_registered = module.students.filter(pk=student.pk).exists()
+    is_registered = module.students.filter(id=student.id).exists()
 
     if request.method == "POST" and module.is_open:
         if is_registered:
@@ -59,12 +44,11 @@ def module_detail(request, code):
         else:
             module.students.add(student)
 
-        return redirect("itreporting:module_detail", code=code)
-
     return render(request, "itreporting/module_detail.html", {
         "module": module,
         "is_registered": is_registered,
     })
+
 
 def my_modules(request):
     student = request.user.student
@@ -202,3 +186,5 @@ def email_signup(request):
 
     return render(request, "newsletter/signup.html", {"form": form})
 
+def about(request):
+    return render(request, 'itreporting/about.html')

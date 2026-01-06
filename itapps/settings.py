@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'itreporting.apps.ItreportingConfig',
     'crispy_forms',
-    'crispy_bootstrap4',
+    "crispy_bootstrap4",
 ]
 
 
