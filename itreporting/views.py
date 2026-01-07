@@ -40,29 +40,42 @@ def course_detail(request, code):
 
 @login_required
 def module_list(request):
-    modules = Module.objects.filter(is_open=True)
-    return render(request, "itreporting/module_list.html", {
-        "modules": modules
-    })
+    student = Student.objects.filter(user=request.user).first()
+    modules = Module.objects.filter(students=student).order_by("code") if student else Module.objects.none()
+    return render(request, "itreporting/module_list.html", {"modules": modules})
 
 @login_required
 def module_detail(request, code):
     module = get_object_or_404(Module, code=code)
-    student = request.user.student
 
+    student = Student.objects.filter(user=request.user).first()
+    if not student:
+        return redirect("itreporting:module_list")
 
-    is_registered = module.students.filter(id=student.id).exists()
-
+    # Handle register / unregister
     if request.method == "POST" and module.is_open:
-        if is_registered:
+        if module.students.filter(id=student.id).exists():
             module.students.remove(student)
         else:
             module.students.add(student)
+        return redirect("itreporting:module_detail", code=module.code)
+
+    is_registered = module.students.filter(id=student.id).exists()
+
+    # Registered students WITH profile photos
+    registered_students = (
+        module.students
+        .select_related("user")
+        .select_related("user__profile")
+        .order_by("user__username")
+    )
 
     return render(request, "itreporting/module_detail.html", {
         "module": module,
         "is_registered": is_registered,
+        "registered_students": registered_students,
     })
+
 
 
 def my_modules(request):

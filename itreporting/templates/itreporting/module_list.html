@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="container py-4">
-    <h1 class="mb-4">Available Modules</h1>
+    <h1 class="mb-4">My Modules</h1>
 
     {% if modules %}
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
@@ -23,7 +23,7 @@
         {% endfor %}
     </div>
     {% else %}
-        <p>No modules are currently available.</p>
+        <p>You are not registered for any modules yet.</p>
     {% endif %}
 </div>
 {% endblock %}
