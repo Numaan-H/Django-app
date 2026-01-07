@@ -16,15 +16,15 @@
 
     <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}" />
 
-    <title>Student IT Services - {{ title }}</title>
+    <title>Lotus University - {{ title }}</title>
   </head>
-  <body>
-    <div class="container">
+  <body class="d-flex flex-column min-vh-100">
+    <div class="container flex-grow-1">
       <header class="site-header">
         <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
           <div class="container">
             <a class="navbar-brand mr-4" href="{% url 'itreporting:home' %}">
-              Student IT Services
+              Lotus
             </a>
             <button
               class="navbar-toggler"
@@ -130,7 +130,47 @@
         </div>
       </div>
     </div>
-
+    <footer class="bg-steel text-light mt-auto py-4">
+      <hr class="my-0">
+      <div class="container">
+        <div class="row">
+    
+          <!-- Left -->
+          <div class="col-md-6 mb-3 mb-md-0">
+            <h6 class="text-uppercase fw-bold">Lotus University</h6>
+            <p class="small mb-1">
+              Supporting students as a team
+            </p>
+            <p class="small mb-0">
+              &copy; {{ now|date:"Y" }} Student IT Services
+            </p>
+          </div>
+    
+          <!-- Right -->
+          <div class="col-md-6 text-md-end">
+            <ul class="list-inline mb-2">
+              <li class="list-inline-item">
+                <a href="{% url 'itreporting:home' %}" class="text-light text-decoration-none">Home</a>
+              </li>
+              <li class="list-inline-item">
+                <a href="{% url 'itreporting:about' %}" class="text-light text-decoration-none">About</a>
+              </li>
+              <li class="list-inline-item">
+                <a href="{% url 'itreporting:contact' %}" class="text-light text-decoration-none">Contact</a>
+              </li>
+            </ul>
+    
+            {% if user.is_authenticated %}
+              <span class="small">Logged in as <strong>{{ user.username }}</strong></span>
+            {% else %}
+              <span class="small">Not logged in</span>
+            {% endif %}
+          </div>
+    
+        </div>
+      </div>
+    </footer>
+    
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script
