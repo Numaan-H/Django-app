@@ -18,4 +18,6 @@ urlpatterns = [
     path("modules/", views.module_list, name="module_list"),
     path("modules/<str:code>/", views.module_detail, name="module_detail"),
     path('about/', itreporting_views.about, name='about'),
+    path("courses/", views.course_list, name="course_list"),
+    path("courses/<str:code>/", views.course_detail, name="course_detail"),
 ]

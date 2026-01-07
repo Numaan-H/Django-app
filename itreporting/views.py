@@ -24,6 +24,21 @@ def set_weather_city(request):
     return redirect(request.META.get("HTTP_REFERER", "/"))
 
 @login_required
+def course_list(request):
+    courses = Course.objects.all().order_by("code")
+    return render(request, "itreporting/course_list.html", {"courses": courses})
+
+@login_required
+def course_detail(request, code):
+    course = get_object_or_404(Course, code=code)
+    modules = course.modules.all().order_by("code")
+    return render(
+        request,
+        "itreporting/course_detail.html",
+        {"course": course, "modules": modules},
+    )
+
+@login_required
 def module_list(request):
     modules = Module.objects.filter(is_open=True)
     return render(request, "itreporting/module_list.html", {
